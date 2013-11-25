@@ -387,6 +387,7 @@ python () {
     # Handle backfilling
     oe.utils.features_backfill("DISTRO_FEATURES", d)
     oe.utils.features_backfill("MACHINE_FEATURES", d)
+    oe.utils.features_backfill("PACKAGECONFIG", d)
 
     # Handle PACKAGECONFIG
     #
