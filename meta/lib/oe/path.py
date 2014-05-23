@@ -157,6 +157,32 @@ def symlink(source, destination, force=False):
         if e.errno != errno.EEXIST or os.readlink(destination) != source:
             raise
 
+def symlink_files(source, destination, force=False):
+    """Create one or more symbolic links.
+
+    The source can be a wildcard/glob, and the destination can be a directory
+    or filename (if the source is one file)."""
+    import errno
+    from glob import glob
+
+    source_files = glob(source)
+    if not source_files:
+        raise IOError(errno.ENOENT, 'No such file or directory', source)
+
+    destination_isdir = destination.endswith('/') or os.path.isdir(destination)
+    if destination_isdir or len(source_files) > 1:
+        if not os.path.exists(destination):
+            raise IOError(errno.ENOENT, 'No such file or directory', destination)
+        elif not os.path.isdir(destination):
+            raise IOError(errno.ENOTDIR, 'Not a directory', destination)
+
+    for source_file in source_files:
+        if not destination_isdir:
+            symlink(source_file, destination, force)
+        else:
+            symlink(source_file, os.path.join(destination, os.path.basename(source_file)), force)
+
+
 def find(dir, **walkoptions):
     """ Given a directory, recurses into that directory,
     returning all files as absolute paths. """
