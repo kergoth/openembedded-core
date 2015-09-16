@@ -65,9 +65,11 @@ def main():
     logger.debug('Found bitbake path: %s' % bitbakepath)
     scriptpath.add_oe_lib_path()
 
+    scriptutils.logger_setup_filters(logger)
     scriptutils.logger_setup_color(logger, global_args.color)
 
     tinfoil = tinfoil_init(False)
+    tinfoil.logger.handlers = logger.handlers
     try:
         for path in (tinfoil.config_data.getVar('BBPATH').split(':')
                      + [scripts_path]):

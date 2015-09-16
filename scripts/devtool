@@ -272,11 +272,13 @@ def main():
         logger.debug('Using standard bitbake path %s' % bitbakepath)
         scriptpath.add_oe_lib_path()
 
+    scriptutils.logger_setup_filters(logger)
     scriptutils.logger_setup_color(logger, global_args.color)
 
     if global_args.bbpath is None:
         try:
             tinfoil = setup_tinfoil(config_only=True, basepath=basepath)
+            tinfoil.logger.handlers = logger.handlers
             try:
                 global_args.bbpath = tinfoil.config_data.getVar('BBPATH')
             finally:
