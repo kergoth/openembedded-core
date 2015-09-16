@@ -19,6 +19,7 @@ import tempfile
 import importlib
 from importlib import machinery
 
+
 def logger_create(name, stream=None):
     logger = logging.getLogger(name)
     loggerhandler = logging.StreamHandler(stream=stream)
@@ -26,6 +27,20 @@ def logger_create(name, stream=None):
     logger.addHandler(loggerhandler)
     logger.setLevel(logging.INFO)
     return logger
+
+
+def logger_setup_filters(logger):
+    import bb.msg
+
+    console = logging.StreamHandler(sys.stdout)
+    errconsole = logging.StreamHandler(sys.stderr)
+    bb.msg.addDefaultlogFilter(console, bb.msg.BBLogFilterStdOut)
+    bb.msg.addDefaultlogFilter(errconsole, bb.msg.BBLogFilterStdErr)
+    format_str = "%(levelname)s: %(message)s"
+    console.setFormatter(bb.msg.BBLogFormatter(format_str))
+    errconsole.setFormatter(bb.msg.BBLogFormatter(format_str))
+    logger.handlers = [console, errconsole]
+
 
 def logger_setup_color(logger, color='auto'):
     from bb.msg import BBLogFormatter
