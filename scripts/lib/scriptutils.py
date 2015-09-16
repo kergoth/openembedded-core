@@ -33,9 +33,11 @@ def logger_setup_filters(logger):
     import bb.msg
 
     console = logging.StreamHandler(sys.stdout)
+    bb.msg.addDefaultlogFilter(console)
     errconsole = logging.StreamHandler(sys.stderr)
-    bb.msg.addDefaultlogFilter(console, bb.msg.BBLogFilterStdOut)
-    bb.msg.addDefaultlogFilter(errconsole, bb.msg.BBLogFilterStdErr)
+    bb.msg.addDefaultlogFilter(errconsole)
+    console.addFilter(lambda r: r.levelno < logging.WARNING)
+    errconsole.addFilter(lambda r: r.levelno >= logging.WARNING)
     format_str = "%(levelname)s: %(message)s"
     console.setFormatter(bb.msg.BBLogFormatter(format_str))
     errconsole.setFormatter(bb.msg.BBLogFormatter(format_str))
