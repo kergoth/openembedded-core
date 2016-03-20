@@ -9,6 +9,7 @@ inherit utils
 inherit utility-tasks
 inherit metadata_scm
 inherit logging
+inherit prepare-sources
 
 OE_EXTRA_IMPORTS ?= ""
 
