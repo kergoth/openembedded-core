@@ -23,4 +23,6 @@ addtask prepare_sources after do_patch before do_configure
 python () {
     if d.getVar('do_prepare_sources', False).rstrip():
         d.delVarFlag('do_prepare_sources', 'noexec')
+        if 'SRCTREECOVEREDTASKS' in d:
+            d.appendVar('SRCTREECOVEREDTASKS', ' do_prepare_sources')
 }
