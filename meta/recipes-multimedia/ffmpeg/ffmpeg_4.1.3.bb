@@ -85,6 +85,14 @@ def cpu(d):
     return 'generic'
 
 EXTRA_OECONF = " \
+    --prefix=${prefix} \
+    --bindir=${bindir} \
+    --datadir=${datadir}/ffmpeg \
+    --docdir=${docdir} \
+    --incdir=${includedir} \
+    --libdir=${libdir} \
+    --mandir=${mandir} \
+    --shlibdir=${libdir} \
     --disable-stripping \
     --enable-pic \
     --enable-shared \
@@ -108,9 +116,6 @@ EXTRA_OECONF = " \
     --sysroot="${STAGING_DIR_TARGET}" \
     --enable-hardcoded-tables \
     ${EXTRA_FFCONF} \
-    --libdir=${libdir} \
-    --shlibdir=${libdir} \
-    --datadir=${datadir}/ffmpeg \
     ${@bb.utils.contains('AVAILTUNES', 'mips32r2', '', '--disable-mipsdsp --disable-mipsdspr2', d)} \
     --cpu=${@cpu(d)} \
     --pkg-config=pkg-config \
