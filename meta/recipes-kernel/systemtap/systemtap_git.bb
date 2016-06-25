@@ -34,7 +34,7 @@ FILES_${PN}-exporter = "${sysconfdir}/stap-exporter/* \
                         ${systemd_unitdir}/system/stap-exporter.service \
                         ${sbindir}/stap-exporter"
 
-RDEPENDS_${PN}-exporter = "${PN} python3-core python3-netclient"
+RDEPENDS_${PN}-exporter = "${PN} python3-core python3-netclient python3-io python3-subprocess python3-shell"
 
 SYSTEMD_SERVICE_${PN}-exporter = "stap-exporter.service"
 
