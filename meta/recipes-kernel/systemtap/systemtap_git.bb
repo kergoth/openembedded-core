@@ -38,6 +38,11 @@ RDEPENDS_${PN}-exporter = "${PN} python3-core python3-netclient python3-io pytho
 
 SYSTEMD_SERVICE_${PN}-exporter = "stap-exporter.service"
 
+RRECOMMENDS_${PN} += "${PN}-dtrace"
+PACKAGE_BEFORE_PN += "${PN}-dtrace"
+FILES_${PN}-dtrace = "${bindir}/dtrace"
+RREPLACES_${PN}-dtrace = "${PN}"
+
 do_configure_prepend () {
     # Improve reproducibility for c++ object files
     reltivepath="${@os.path.relpath(d.getVar('STAGING_INCDIR'), d.getVar('S'))}"
