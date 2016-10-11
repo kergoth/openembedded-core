@@ -5,6 +5,7 @@ SRC_URI  = "${KERNELORG_MIRROR}/linux/network/${BPN}/${BP}.tar.xz \
             file://0001-connman.service-stop-systemd-resolved-when-we-use-co.patch \
             file://0001-gweb-fix-segfault-with-musl-v1.1.21.patch \
             file://connman \
+            file://connmand-nfsroot.in \
             file://no-version-scripts.patch \
 "
 

@@ -76,10 +76,18 @@ ALTERNATIVE_TARGET[resolv-conf] = "${@bb.utils.contains('DISTRO_FEATURES','syste
 ALTERNATIVE_LINK_NAME[resolv-conf] = "${@bb.utils.contains('DISTRO_FEATURES','systemd','${sysconfdir}/resolv.conf','',d)}"
 
 do_install_append() {
+	wrapperpath=${libexecdir}/connman/connmand-nfsroot
+	install -d ${D}${libexecdir}/connman
+	install -m 0755 ${WORKDIR}/connmand-nfsroot.in ${D}$wrapperpath
+	sed -i -e 's%@SBINDIR@%${sbindir}%;' ${D}$wrapperpath
+
 	if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
 		install -d ${D}${sysconfdir}/init.d
 		install -m 0755 ${WORKDIR}/connman ${D}${sysconfdir}/init.d/connman
-		sed -i s%@DATADIR@%${datadir}% ${D}${sysconfdir}/init.d/connman
+		sed -i -e "s#@DATADIR@#${datadir}#g; s#^DAEMON=.*#DAEMON=$wrapperpath#" ${D}${sysconfdir}/init.d/connman
+	fi
+	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
+		sed -i -e "s#^ExecStart=.*#ExecStart=$wrapperpath -n#" ${D}${systemd_unitdir}/system/connman.service
 	fi
 
 	install -d ${D}${bindir}
