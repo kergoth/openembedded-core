@@ -38,42 +38,50 @@ def layer(layerpath):
 def newappend(args):
     import oe.recipeutils
 
-    recipe_path = tinfoil.get_recipe_file(args.target)
-
-    rd = tinfoil.config_data.createCopy()
-    rd.setVar('FILE', recipe_path)
-    append_path, path_ok = oe.recipeutils.get_bbappend_path(rd, args.destlayer, args.wildcard_version)
-    if not append_path:
-        logger.error('Unable to determine layer directory containing %s', recipe_path)
-        return 1
-
-    if not path_ok:
-        logger.warning('Unable to determine correct subdirectory path for bbappend file - check that what %s adds to BBFILES also matches .bbappend files. Using %s for now, but until you fix this the bbappend will not be applied.', os.path.join(args.destlayer, 'conf', 'layer.conf'), os.path.dirname(append_path))
-
-    layerdirs = [os.path.abspath(layerdir) for layerdir in rd.getVar('BBLAYERS').split()]
+    layerdirs = [os.path.abspath(layerdir) for layerdir in tinfoil.config_data.getVar('BBLAYERS', True).split()]
     if not os.path.abspath(args.destlayer) in layerdirs:
         logger.warning('Specified layer is not currently enabled in bblayers.conf, you will need to add it before this bbappend will be active')
 
-    if not os.path.exists(append_path):
-        bb.utils.mkdirhier(os.path.dirname(append_path))
+    appends, recipes = [], []
+    for target in args.targets:
+        recipe_path = tinfoil.get_recipe_file(args.target)
 
-        try:
-            open(append_path, 'a').close()
-        except (OSError, IOError) as exc:
-            logger.critical(str(exc))
+        rd = tinfoil.config_data.createCopy()
+        rd.setVar('FILE', recipe_path)
+        append_path, path_ok = oe.recipeutils.get_bbappend_path(rd, args.destlayer, args.wildcard_version)
+        if not append_path:
+            logger.error('Unable to determine layer directory containing %s', recipe_path)
             return 1
 
+        if not path_ok:
+            logger.warning('Unable to determine correct subdirectory path for bbappend file - check that what %s adds to BBFILES also matches .bbappend files. Using %s for now, but until you fix this the bbappend will not be applied.', os.path.join(args.destlayer, 'conf', 'layer.conf'), os.path.dirname(append_path))
+
+        if not os.path.exists(append_path):
+            bb.utils.mkdirhier(os.path.dirname(append_path))
+
+            try:
+                open(append_path, 'a').close()
+            except (OSError, IOError) as exc:
+                logger.critical(str(exc))
+                return 1
+
+        if not append_path in appends:
+            appends.append(append_path)
+        if not recipe_path in recipes:
+            recipes.append(recipe_path)
+
     if args.edit:
-        return scriptutils.run_editor([append_path, recipe_path], logger)
+        return scriptutils.run_editor(appends + recipes)
     else:
-        print(append_path)
+        for a in appends:
+            print(a)
 
 
 def register_commands(subparsers):
     parser = subparsers.add_parser('newappend',
-                                   help='Create a bbappend for the specified target in the specified layer')
+                                   help='Create a bbappend for the specified target(s) in the specified layer')
     parser.add_argument('-e', '--edit', help='Edit the new append. This obeys $VISUAL if set, otherwise $EDITOR, otherwise vi.', action='store_true')
     parser.add_argument('-w', '--wildcard-version', help='Use wildcard to make the bbappend apply to any recipe version', action='store_true')
     parser.add_argument('destlayer', help='Base directory of the destination layer to write the bbappend to', type=layer)
-    parser.add_argument('target', help='Target recipe/provide to append')
+    parser.add_argument('targets', metavar='TARGET', help='Target recipe(s)/provide(s) to append', nargs='+')
     parser.set_defaults(func=newappend, parserecipes=True)
