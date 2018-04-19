@@ -356,6 +356,22 @@ def sstate_installpkg(ss, d):
 
     return sstate_installpkgdir(ss, d)
 
+def sstate_rename(src, dst):
+    try:
+        os.rename(src, dst)
+    except PermissionError:
+        import time
+        for i in range(30):
+            time.sleep(0.1)
+            try:
+                os.rename(src, dst)
+            except PermissionError:
+                continue
+            else:
+                break
+        else:
+            raise
+
 def sstate_installpkgdir(ss, d):
     import oe.path
     import subprocess
@@ -376,7 +392,7 @@ def sstate_installpkgdir(ss, d):
 
     for state in ss['dirs']:
         prepdir(state[1])
-        os.rename(sstateinst + state[0], state[1])
+        sstate_rename(sstateinst + state[0], state[1])
     sstate_install(ss, d)
 
     for plain in ss['plaindirs']:
@@ -388,7 +404,7 @@ def sstate_installpkgdir(ss, d):
         dest = plain
         bb.utils.mkdirhier(src)
         prepdir(dest)
-        os.rename(src, dest)
+        sstate_rename(src, dest)
 
     return True
 
@@ -639,7 +655,7 @@ def sstate_package(ss, d):
                     continue
                 bb.error("sstate found an absolute path symlink %s pointing at %s. Please replace this with a relative link." % (srcpath, link))
         bb.debug(2, "Preparing tree %s for packaging at %s" % (state[1], sstatebuild + state[0]))
-        os.rename(state[1], sstatebuild + state[0])
+        sstate_rename(state[1], sstatebuild + state[0])
 
     workdir = d.getVar('WORKDIR')
     sharedworkdir = os.path.join(d.getVar('TMPDIR'), "work-shared")
@@ -649,7 +665,7 @@ def sstate_package(ss, d):
             pdir = plain.replace(sharedworkdir, sstatebuild)
         bb.utils.mkdirhier(plain)
         bb.utils.mkdirhier(pdir)
-        os.rename(plain, pdir)
+        sstate_rename(plain, pdir)
 
     d.setVar('SSTATE_BUILDDIR', sstatebuild)
     d.setVar('SSTATE_PKG', sstatepkg)
