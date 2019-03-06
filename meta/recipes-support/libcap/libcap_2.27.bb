@@ -28,13 +28,21 @@ PACKAGECONFIG[pam] = "PAM_CAP=yes,PAM_CAP=no,libpam"
 
 EXTRA_OEMAKE = " \
   INDENT=  \
-  lib='${baselib}' \
   RAISE_SETFCAP=no \
   DYNAMIC=yes \
   BUILD_GPERF=yes \
   \
   'BUILD_CC=${BUILD_CC}' \
   'BUILD_CFLAGS=${BUILD_CFLAGS}' \
+  \
+  'lib=${baselib}' \
+  'prefix=${prefix}' \
+  'exec_prefix=${exec_prefix}' \
+  'MANDIR=${mandir}' \
+  'SBINDIR=${sbindir}' \
+  'INCDIR=${includedir}' \
+  'LIBDIR=${libdir}' \
+  'PKGCONFIGDIR=${libdir}/pkgconfig' \
 "
 
 EXTRA_OEMAKE_append_class-target = " SYSTEM_HEADERS=${STAGING_INCDIR}"
@@ -47,11 +55,7 @@ do_compile() {
 }
 
 do_install() {
-	oe_runmake install \
-		${PACKAGECONFIG_CONFARGS} \
-		DESTDIR="${D}" \
-		prefix="${prefix}" \
-		SBINDIR="${sbindir}"
+	oe_runmake install ${PACKAGECONFIG_CONFARGS} DESTDIR="${D}"
 }
 
 do_install_append() {

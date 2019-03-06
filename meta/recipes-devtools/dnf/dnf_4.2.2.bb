@@ -21,6 +21,8 @@ inherit cmake gettext bash-completion distutils3-base systemd
 
 DEPENDS += "libdnf librepo libcomps python3-iniparse"
 
+export systemd_system_unitdir
+
 # manpages generation requires http://www.sphinx-doc.org/
 EXTRA_OECMAKE = " -DWITH_MAN=0 -DPYTHON_INSTALL_DIR=${PYTHON_SITEPACKAGES_DIR} -DPYTHON_DESIRED=3"
 
