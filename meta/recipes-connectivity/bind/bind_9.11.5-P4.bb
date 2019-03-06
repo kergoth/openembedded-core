@@ -50,6 +50,9 @@ EXTRA_OECONF = " ${ENABLE_IPV6} --with-libtool --enable-threads \
                  --with-openssl=${STAGING_DIR_HOST}${prefix} \
                "
 
+# Export BUILD_CC, etc
+BASE_TASK_EXPORTS += "${BUILD_EXPORTS}"
+
 inherit ${@bb.utils.contains('PACKAGECONFIG', 'python3', 'python3native distutils3-base', '', d)}
 
 # dhcp needs .la so keep them

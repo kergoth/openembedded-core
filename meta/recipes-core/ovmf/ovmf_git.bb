@@ -53,6 +53,10 @@ EDK_TOOLS_DIR="edk2_basetools"
 # OVMF has trouble building with the default optimization of -O2.
 BUILD_OPTIMIZATION="-pipe"
 
+# Export BUILD_CC, etc
+BUILD_LFLAGS = "${BUILD_LDFLAGS}"
+BASE_TASK_EXPORTS += "${BUILD_EXPORTS} BUILD_LFLAGS"
+
 # OVMF supports IA only, although it could conceivably support ARM someday.
 COMPATIBLE_HOST='(i.86|x86_64).*'
 

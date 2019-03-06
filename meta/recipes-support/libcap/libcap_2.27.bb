@@ -15,13 +15,10 @@ SRC_URI[sha256sum] = "dac1792d0118bee6aae6ba7fb93ff1602c6a9bda812fd63916eee1435b
 
 inherit lib_package
 
-# do NOT pass target cflags to host compilations
-#
 do_configure() {
 	# libcap uses := for compilers, fortunately, it gives us a hint
 	# on what should be replaced with ?=
 	sed -e 's,:=,?=,g' -i Make.Rules
-	sed -e 's,^BUILD_CFLAGS ?= $(.*CFLAGS),BUILD_CFLAGS := $(BUILD_CFLAGS),' -i Make.Rules
 }
 
 PACKAGECONFIG ??= "${@bb.utils.filter('DISTRO_FEATURES', 'pam', d)}"
@@ -35,6 +32,9 @@ EXTRA_OEMAKE = " \
   RAISE_SETFCAP=no \
   DYNAMIC=yes \
   BUILD_GPERF=yes \
+  \
+  'BUILD_CC=${BUILD_CC}' \
+  'BUILD_CFLAGS=${BUILD_CFLAGS}' \
 "
 
 EXTRA_OEMAKE_append_class-target = " SYSTEM_HEADERS=${STAGING_INCDIR}"
