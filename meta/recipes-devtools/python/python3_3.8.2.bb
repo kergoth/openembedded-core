@@ -164,6 +164,10 @@ do_install_append() {
                 ${D}${libdir}/python-sysconfigdata/_sysconfigdata.py
 }
 
+do_install_append_class-native () {
+    create_wrapper ${D}${bindir}/${PN}/python${PYTHON_MAJMIN} _PYTHON_SYSCONFIGDATA_NAME="_sysconfigdata"
+}
+
 do_install_append_class-nativesdk () {
     create_wrapper ${D}${bindir}/python${PYTHON_MAJMIN} TERMINFO_DIRS='${sysconfdir}/terminfo:/etc/terminfo:/usr/share/terminfo:/usr/share/misc/terminfo:/lib/terminfo' PYTHONNOUSERSITE='1'
 }
