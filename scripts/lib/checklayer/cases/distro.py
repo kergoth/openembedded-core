@@ -5,7 +5,7 @@
 
 import unittest
 
-from checklayer import LayerType
+from checklayer import LayerType, get_signatures
 from checklayer.case import OECheckLayerTestCase
 
 class DistroCheckLayer(OECheckLayerTestCase):
@@ -26,3 +26,7 @@ class DistroCheckLayer(OECheckLayerTestCase):
         self.assertEqual(self.td['bbvars']['DISTRO'], distro,
                 msg="Layer %s modified distro %s -> %s" % \
                     (self.tc.layer['name'], self.td['bbvars']['DISTRO'], distro))
+
+    def test_distro_world(self):
+        for distro in self.tc.layer['conf']['distros']:
+            get_signatures(self.td['builddir'], failsafe=False, distro=distro)
