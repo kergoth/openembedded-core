@@ -6,6 +6,7 @@ from oeqa.core.case import OEPTestResultTestCase
 from oeqa.selftest.case import OESelftestTestCase
 from oeqa.utils.commands import bitbake, get_bb_var, get_bb_vars, runqemu, Command
 from oeqa.utils.nfs import unfs_server
+from oeqa.utils.multilib import load_tests_multilib_variants, classes_inheriting
 
 def parse_values(content):
     for i in content:
@@ -15,7 +16,7 @@ def parse_values(content):
                 break
 
 class GlibcSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
-    def run_check(self, ssh = None):
+    def run_check(self, ssh=None):
         # configure ssh target
         features = []
         if ssh is not None:
@@ -27,11 +28,11 @@ class GlibcSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
             features.append('EGLIBCPARALLELISM_task-check_pn-glibc-testsuite = "PARALLELMFLAGS="-j1""')
         self.write_config("\n".join(features))
 
-        bitbake("glibc-testsuite -c check")
+        bitbake(self.mlprefix + "glibc-testsuite -c check")
 
-        builddir = get_bb_var("B", "glibc-testsuite")
+        builddir = get_bb_var("B", self.mlprefix + "glibc-testsuite")
 
-        ptestsuite = "glibc-user" if ssh is None else "glibc"
+        ptestsuite = self.mlprefix + "glibc-user" if ssh is None else self.mlprefix + "glibc"
         self.ptest_section(ptestsuite)
         with open(os.path.join(builddir, "tests.sum"), "r") as f:
             for test, result in parse_values(f):
@@ -58,10 +59,10 @@ class GlibcSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
             features.append('IMAGE_FEATURES += "ssh-server-openssh"')
             features.append('CORE_IMAGE_EXTRA_INSTALL += "{0}"'.format(" ".join(default_installed_packages)))
             self.write_config("\n".join(features))
-            bitbake("core-image-minimal")
+            bitbake(self.mlprefix + "core-image-minimal")
 
             # start runqemu
-            qemu = s.enter_context(runqemu("core-image-minimal", runqemuparams = "nographic"))
+            qemu = s.enter_context(runqemu(self.mlprefix + "core-image-minimal", runqemuparams = "nographic"))
 
             # validate that SSH is working
             status, _ = qemu.run("uname")
@@ -75,7 +76,7 @@ class GlibcSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
             if status != 0:
                 raise Exception("Failed to setup NFS mount on target ({})".format(repr(output)))
 
-            self.run_check(ssh = qemu.ip)
+            self.run_check(ssh=qemu.ip)
 
 @OETestTag("toolchain-user")
 class GlibcSelfTest(GlibcSelfTestBase):
@@ -87,3 +88,6 @@ class GlibcSelfTestSystemEmulated(GlibcSelfTestBase):
     def test_glibc(self):
         self.run_check_emulated()
 
+
+def load_tests(loader, tests, pattern):
+    return load_tests_multilib_variants(loader, tests, pattern, classes_inheriting(GlibcSelfTestBase))
