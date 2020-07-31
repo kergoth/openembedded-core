@@ -4,6 +4,7 @@ from oeqa.core.decorator import OETestTag
 from oeqa.core.case import OEPTestResultTestCase
 from oeqa.selftest.case import OESelftestTestCase
 from oeqa.utils.commands import bitbake, get_bb_var, get_bb_vars, runqemu, Command
+from oeqa.utils.multilib import load_tests_multilib_variants, classes_inheriting
 
 def parse_values(content):
     for i in content:
@@ -18,7 +19,7 @@ class GccSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
         if suite not in targets:
             self.skipTest("Target does not use {0}".format(suite))
 
-    def run_check(self, *suites, ssh = None):
+    def run_check(self, *suites, ssh=None):
         targets = set()
         for s in suites:
             if s == "gcc":
@@ -38,7 +39,7 @@ class GccSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
             features.append('TOOLCHAIN_TEST_HOST_PORT = "22"')
         self.write_config("\n".join(features))
 
-        recipe = "gcc-runtime"
+        recipe = self.mlprefix + "gcc-runtime"
         bitbake("{} -c check".format(recipe))
 
         bb_vars = get_bb_vars(["B", "TARGET_SYS"], recipe)
@@ -52,8 +53,7 @@ class GccSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
                 sumspath = os.path.join(builddir, target_sys, suite, "testsuite", "{0}.sum".format(suite.split("-")[0]))
             logpath = os.path.splitext(sumspath)[0] + ".log"
 
-            ptestsuite = "gcc-{}".format(suite) if suite != "gcc" else suite
-            ptestsuite = ptestsuite + "-user" if ssh is None else ptestsuite
+            ptestsuite = "{}gcc{}".format(self.mlprefix, '-' + suite if suite != 'gcc' else '')
             self.ptest_section(ptestsuite, logfile = logpath)
             with open(sumspath, "r") as f:
                 for test, result in parse_values(f):
@@ -65,11 +65,12 @@ class GccSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
         features = []
         features.append('IMAGE_FEATURES += "ssh-server-openssh"')
         features.append('CORE_IMAGE_EXTRA_INSTALL += "{0}"'.format(" ".join(default_installed_packages)))
+
         self.write_config("\n".join(features))
-        bitbake("core-image-minimal")
+        bitbake(self.mlprefix + "core-image-minimal")
 
         # wrap the execution with a qemu instance
-        with runqemu("core-image-minimal", runqemuparams = "nographic") as qemu:
+        with runqemu(self.mlprefix + "core-image-minimal", runqemuparams="nographic") as qemu:
             # validate that SSH is working
             status, _ = qemu.run("uname")
             self.assertEqual(status, 0)
@@ -150,3 +151,6 @@ class GccLibItmSelfTestSystemEmulated(GccSelfTestBase):
         self.check_skip("libitm")
         self.run_check_emulated("libitm")
 
+
+def load_tests(loader, tests, pattern):
+    return load_tests_multilib_variants(loader, tests, pattern, classes_inheriting(GccSelfTestBase))
