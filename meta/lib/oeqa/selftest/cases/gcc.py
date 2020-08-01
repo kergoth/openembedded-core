@@ -77,76 +77,60 @@ class GccSelfTestBase(OESelftestTestCase, OEPTestResultTestCase):
 
             return self.run_check(*args, ssh=qemu.ip, **kwargs)
 
+
 @OETestTag("toolchain-user")
 class GccCrossSelfTest(GccSelfTestBase):
     def test_cross_gcc(self):
         self.run_check("gcc")
 
-@OETestTag("toolchain-user")
-class GxxCrossSelfTest(GccSelfTestBase):
     def test_cross_gxx(self):
         self.run_check("g++")
 
+
 @OETestTag("toolchain-user")
-class GccLibAtomicSelfTest(GccSelfTestBase):
+class GccSelfTest(GccSelfTestBase):
     def test_libatomic(self):
         self.run_check("libatomic")
 
-@OETestTag("toolchain-user")
-class GccLibGompSelfTest(GccSelfTestBase):
     def test_libgomp(self):
         self.run_check("libgomp")
 
-@OETestTag("toolchain-user")
-class GccLibStdCxxSelfTest(GccSelfTestBase):
     def test_libstdcxx(self):
         self.run_check("libstdc++-v3")
 
-@OETestTag("toolchain-user")
-class GccLibSspSelfTest(GccSelfTestBase):
     def test_libssp(self):
         self.check_skip("libssp")
         self.run_check("libssp")
 
-@OETestTag("toolchain-user")
-class GccLibItmSelfTest(GccSelfTestBase):
     def test_libitm(self):
         self.check_skip("libitm")
         self.run_check("libitm")
+
 
 @OETestTag("toolchain-system")
 class GccCrossSelfTestSystemEmulated(GccSelfTestBase):
     def test_cross_gcc(self):
         self.run_check_emulated("gcc")
 
-@OETestTag("toolchain-system")
-class GxxCrossSelfTestSystemEmulated(GccSelfTestBase):
     def test_cross_gxx(self):
         self.run_check_emulated("g++")
 
+
 @OETestTag("toolchain-system")
-class GccLibAtomicSelfTestSystemEmulated(GccSelfTestBase):
+class GccSelfTestSystemEmulated(GccSelfTestBase):
     def test_libatomic(self):
         self.run_check_emulated("libatomic")
 
-@OETestTag("toolchain-system")
-class GccLibGompSelfTestSystemEmulated(GccSelfTestBase):
     def test_libgomp(self):
         self.run_check_emulated("libgomp")
 
-@OETestTag("toolchain-system")
-class GccLibStdCxxSelfTestSystemEmulated(GccSelfTestBase):
     def test_libstdcxx(self):
         self.run_check_emulated("libstdc++-v3")
 
-@OETestTag("toolchain-system")
-class GccLibSspSelfTestSystemEmulated(GccSelfTestBase):
     def test_libssp(self):
         self.check_skip("libssp")
         self.run_check_emulated("libssp")
 
-@OETestTag("toolchain-system")
-class GccLibItmSelfTestSystemEmulated(GccSelfTestBase):
     def test_libitm(self):
         self.check_skip("libitm")
         self.run_check_emulated("libitm")
