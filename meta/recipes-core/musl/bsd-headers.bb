@@ -29,3 +29,5 @@ do_install() {
 COMPATIBLE_HOST = ".*-musl.*"
 RDEPENDS_${PN}-dev = ""
 RRECOMMENDS_${PN}-dbg = "${PN}-dev (= ${EXTENDPKGV})"
+
+BBCLASSEXTEND += "nativesdk"
