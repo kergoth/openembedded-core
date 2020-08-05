@@ -1,8 +1,7 @@
 inherit cross
 
 CLASSOVERRIDE = "class-crosssdk"
-NATIVESDKLIBC ?= "libc-glibc"
-LIBCOVERRIDE = ":${NATIVESDKLIBC}"
+LIBCOVERRIDE = ":libc-${SDKLIBC}"
 MACHINEOVERRIDES = ""
 PACKAGE_ARCH = "${SDK_ARCH}"
 
