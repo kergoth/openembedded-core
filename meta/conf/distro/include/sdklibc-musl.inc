@@ -1,0 +1,4 @@
+SDKLIBCEXTENSION = "-${SDKLIBC}"
+
+SDKIMAGE_LINGUAS = ""
+BUILDSDK_CXXFLAGS += "-fvisibility-inlines-hidden"
