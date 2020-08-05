@@ -5,6 +5,7 @@ LICENSE = "MIT"
 
 TOOLCHAIN_TARGET_TASK ?= ""
 
+NATIVESDKLIBC ?= "libc-glibc"
 TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-python3-core \
     nativesdk-python3-modules \
@@ -23,7 +24,7 @@ TOOLCHAIN_HOST_TASK ?= "\
     nativesdk-wget \
     nativesdk-ca-certificates \
     nativesdk-texinfo \
-    nativesdk-libnss-nis \
+    ${@'nativesdk-libnss-nis' if '${NATIVESDKLIBC}' == 'libc-glibc' else ''} \
     nativesdk-rpcsvc-proto \
     nativesdk-patch \
     nativesdk-mtools \
