@@ -21,8 +21,7 @@ S = "${WORKDIR}/git"
 
 PROVIDES += "virtual/libc virtual/libiconv virtual/libintl virtual/crypt"
 
-DEPENDS = "virtual/${TARGET_PREFIX}binutils \
-           virtual/${TARGET_PREFIX}gcc \
+DEPENDS = "virtual/${TARGET_PREFIX}gcc \
            libgcc-initial \
            linux-libc-headers \
            bsd-headers \
@@ -34,6 +33,7 @@ MUSL_LDSO_ARCH = "${@get_musl_loader_arch(d)}"
 export CROSS_COMPILE="${TARGET_PREFIX}"
 
 LDFLAGS += "-Wl,-soname,libc.so"
+BUILDSDK_LDFLAGS += "-Wl,-soname,libc.so"
 
 # When compiling for Thumb or Thumb2, frame pointers _must_ be disabled since the
 # Thumb frame pointer in r7 clashes with musl's use of inline asm to make syscalls
@@ -87,3 +87,5 @@ RPROVIDES_${PN} += "ldd libsegfault rtld(GNU_HASH)"
 LEAD_SONAME = "libc.so"
 INSANE_SKIP_${PN}-dev = "staticdev"
 INSANE_SKIP_${PN} = "libdir"
+
+BBCLASSEXTEND += "nativesdk"
