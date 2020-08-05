@@ -11,9 +11,6 @@ PACKAGEGROUP_DISABLE_COMPLEMENTARY = "1"
 
 RDEPENDS_${PN} = "\
     nativesdk-pkgconfig \
-    nativesdk-qemu \
-    nativesdk-qemu-helper \
-    nativesdk-pseudo \
     nativesdk-unfs3 \
     nativesdk-opkg \
     nativesdk-libtool \
@@ -28,6 +25,9 @@ RDEPENDS_${PN} = "\
     nativesdk-bison \
     nativesdk-flex \
     "
+LIBC_RDEPENDS = "nativesdk-pseudo nativesdk-qemu nativesdk-qemu-helper"
+LIBC_RDEPENDS_libc-musl = ""
+RDEPENDS_${PN} += "${LIBC_RDEPENDS}"
 
 RDEPENDS_${PN}_darwin = "\
     nativesdk-pkgconfig \
