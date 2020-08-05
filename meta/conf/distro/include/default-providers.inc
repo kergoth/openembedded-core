@@ -1,6 +1,10 @@
 #
 # Default virtual providers
 #
+PREFERRED_PROVIDER_virtual/nativesdk-libc ??= "nativesdk-${SDKLIBC}"
+PREFERRED_PROVIDER_virtual/nativesdk-libintl ??= "nativesdk-${SDKLIBC}"
+PREFERRED_PROVIDER_virtual/nativesdk-libiconv ??= "nativesdk-${SDKLIBC}"
+PREFERRED_PROVIDER_virtual/nativesdk-crypt ??= "nativesdk-${SDKLIBC}"
 PREFERRED_PROVIDER_virtual/xserver ?= "xserver-xorg"
 PREFERRED_PROVIDER_virtual/xserver-xf86 ?= "xserver-xorg"
 PREFERRED_PROVIDER_virtual/egl ?= "mesa"
