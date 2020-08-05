@@ -13,6 +13,10 @@ INHIBIT_DEFAULT_DEPS = "1"
 DEPENDS = "virtual/${TARGET_PREFIX}binutils \
            virtual/${TARGET_PREFIX}gcc \
 "
+# gcc in DEPENDS automatically gets the -crossdk suffix added, but not
+# binutils, so we need to override it
+DEPENDS_class-nativesdk = "virtual/${TARGET_PREFIX}binutils-crosssdk \
+                           virtual/${TARGET_PREFIX}gcc-crosssdk"
 
 do_configure[noexec] = "1"
 
@@ -32,3 +36,5 @@ COMPATIBLE_HOST = ".*-musl.*"
 RDEPENDS_${PN}-staticdev = ""
 RDEPENDS_${PN}-dev = ""
 RRECOMMENDS_${PN}-dbg = "${PN}-staticdev (= ${EXTENDPKGV})"
+
+BBCLASSEXTEND += "nativesdk"
