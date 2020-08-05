@@ -5,8 +5,7 @@ EXCLUDE_FROM_WORLD = "1"
 STAGING_BINDIR_TOOLCHAIN = "${STAGING_DIR_NATIVE}${bindir_native}/${SDK_ARCH}${SDK_VENDOR}-${SDK_OS}"
 
 # libc for the SDK can be different to that of the target
-NATIVESDKLIBC ?= "libc-glibc"
-LIBCOVERRIDE = ":${NATIVESDKLIBC}"
+LIBCOVERRIDE = ":libc-${SDKLIBC}"
 CLASSOVERRIDE = "class-nativesdk"
 MACHINEOVERRIDES = ""
 MACHINE_FEATURES = ""
