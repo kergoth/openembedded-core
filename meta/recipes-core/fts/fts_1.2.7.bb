@@ -19,3 +19,4 @@ inherit autotools pkgconfig
 #
 COMPATIBLE_HOST = ".*-musl.*"
 
+BBCLASSEXTEND += "nativesdk"
