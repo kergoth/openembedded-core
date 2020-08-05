@@ -25,7 +25,7 @@ S = "${WORKDIR}/git"
 
 BUILD_CPPFLAGS = "-I${STAGING_INCDIR_NATIVE}"
 TARGET_CPPFLAGS = "-I${STAGING_DIR_TARGET}${includedir} -Wno-error"
-CPPFLAGS_append_class-nativesdk = " -Wno-error"
+BUILDSDK_CFLAGS += " -Wno-error"
 
 API = "--disable-obsolete-api"
 EXTRA_OECONF += "${API}"
