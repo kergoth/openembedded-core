@@ -20,3 +20,4 @@ S = "${WORKDIR}/git"
 
 COMPATIBLE_HOST = ".*-musl.*"
 
+BBCLASSEXTEND += "nativesdk"
