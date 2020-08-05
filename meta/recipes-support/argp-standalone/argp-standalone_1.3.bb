@@ -18,6 +18,7 @@ SRC_URI[sha256sum] = "dec79694da1319acd2238ce95df57f3680fea2482096e483323fddf3d8
 inherit autotools
 
 CFLAGS += "-fPIC -U__OPTIMIZE__"
+BUILDSDK_CFLAGS += "-fPIC -U__OPTIMIZE__"
 
 RDEPENDS_${PN}-dev = ""
 RDEPENDS_${PN}-staticdev = ""
@@ -30,3 +31,5 @@ do_install() {
 # We will skip parsing for non-musl systems
 #
 COMPATIBLE_HOST = ".*-musl.*"
+
+BBCLASSEXTEND += "nativesdk"
