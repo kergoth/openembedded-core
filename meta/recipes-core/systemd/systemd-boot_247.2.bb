@@ -1,14 +1,14 @@
 require systemd.inc
 FILESEXTRAPATHS =. "${FILE_DIRNAME}/systemd:"
 
+SRC_URI += "file://0001-Use-an-array-for-efi-ld-to-allow-for-ld-arguments.patch"
+
 require conf/image-uefi.conf
 
 DEPENDS = "intltool-native libcap util-linux gnu-efi gperf-native"
 
 inherit meson pkgconfig gettext
 inherit deploy
-
-LDFLAGS_prepend = "${@ " ".join(d.getVar('LD').split()[1:])} "
 
 do_write_config[vardeps] += "CC OBJCOPY"
 do_write_config_append() {
@@ -19,14 +19,14 @@ objcopy = ${@meson_array('OBJCOPY', d)}
 EOF
 }
 
-EXTRA_OEMESON += "-Defi=true \
+EXTRA_OEMESON += '-Defi=true \
                   -Dgnu-efi=true \
                   -Defi-includedir=${STAGING_INCDIR}/efi \
                   -Defi-libdir=${STAGING_LIBDIR} \
-                  -Defi-ld=${@ d.getVar('LD').split()[0]} \
+                  "-Defi-ld=${@meson_array("LD", d)}" \
                   -Dman=false \
                   --cross-file ${WORKDIR}/meson-${PN}.cross \
-                  "
+                  '
 
 # install to the image as boot*.efi if its the EFI_PROVIDER,
 # otherwise install as the full name.
