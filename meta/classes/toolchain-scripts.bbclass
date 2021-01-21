@@ -40,6 +40,16 @@ if [ ! -z "\$LD_LIBRARY_PATH" ]; then
     return 1
 fi
 
+if [ -n "\$BASH_SOURCE" ] || [ -n "\$ZSH_NAME" ]; then
+    if [ -n "\$BASH_SOURCE" ]; then
+        scriptdir="\$(cd "\$(dirname "\$BASH_SOURCE")" && pwd)"
+    elif [ -n "\$ZSH_NAME" ]; then
+        scriptdir="\$(cd "\$(dirname "\$0")" && pwd)"
+    fi
+else
+    scriptdir="${SDKPATH}"
+fi
+
 export SDKTARGETSYSROOT=$sysroot
 export PKG_CONFIG_SYSROOT_DIR=\$SDKTARGETSYSROOT
 export PKG_CONFIG_PATH=\$SDKTARGETSYSROOT$libdir/pkgconfig:\$SDKTARGETSYSROOT$prefix/share/pkgconfig
